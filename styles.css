@@ -92,3 +92,24 @@ form button:hover {
     font-size: 1rem;
   }
 }
+
+button.delete-button {
+  background-color: #e74c3c;
+  color: white;
+  padding: 5px 10px;
+  border: none;
+  cursor: pointer;
+  margin-top: 10px;
+  display: inline-block; /* Pastikan tombol muncul */
+  visibility: visible;   /* Pastikan tombol tidak tersembunyi */
+}
+
+button.delete-button:hover {
+  background-color: #c0392b;
+}
+
+div {
+  border: 1px solid #ccc;
+  padding: 10px;
+  margin-bottom: 10px;
+}

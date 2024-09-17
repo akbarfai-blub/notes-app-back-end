@@ -1,113 +1,32 @@
-// Data Dummy Catatan
-const notesData = [
-  {
-    id: "notes-jT-jjsyz61J8XKiI",
-    title: "Welcome to Notes, Dimas!",
-    body: "Welcome to Notes! This is your first note. You can archive it, delete it, or create new ones.",
-    createdAt: "2022-07-28T10:03:12.594Z",
-    archived: false,
-  },
-  {
-    id: "notes-aB-cdefg12345",
-    title: "Meeting Agenda",
-    body: "Discuss project updates and assign tasks for the upcoming week.",
-    createdAt: "2022-08-05T15:30:00.000Z",
-    archived: false,
-  },
-  {
-    id: "notes-XyZ-789012345",
-    title: "Shopping List",
-    body: "Milk, eggs, bread, fruits, and vegetables.",
-    createdAt: "2022-08-10T08:45:23.120Z",
-    archived: false,
-  },
-  {
-    id: "notes-1a-2b3c4d5e6f",
-    title: "Personal Goals",
-    body: "Read two books per month, exercise three times a week, learn a new language.",
-    createdAt: "2022-08-15T18:12:55.789Z",
-    archived: false,
-  },
-  {
-    id: "notes-LMN-456789",
-    title: "Recipe: Spaghetti Bolognese",
-    body: "Ingredients: ground beef, tomatoes, onions, garlic, pasta. Steps:...",
-    createdAt: "2022-08-20T12:30:40.200Z",
-    archived: false,
-  },
-  {
-    id: "notes-QwErTyUiOp",
-    title: "Workout Routine",
-    body: "Monday: Cardio, Tuesday: Upper body, Wednesday: Rest, Thursday: Lower body, Friday: Cardio.",
-    createdAt: "2022-08-25T09:15:17.890Z",
-    archived: false,
-  },
-  {
-    id: "notes-abcdef-987654",
-    title: "Book Recommendations",
-    body: "1. 'The Alchemist' by Paulo Coelho\n2. '1984' by George Orwell\n3. 'To Kill a Mockingbird' by Harper Lee",
-    createdAt: "2022-09-01T14:20:05.321Z",
-    archived: false,
-  },
-  {
-    id: "notes-zyxwv-54321",
-    title: "Daily Reflections",
-    body: "Write down three positive things that happened today and one thing to improve tomorrow.",
-    createdAt: "2022-09-07T20:40:30.150Z",
-    archived: false,
-  },
-  {
-    id: "notes-poiuyt-987654",
-    title: "Travel Bucket List",
-    body: "1. Paris, France\n2. Kyoto, Japan\n3. Santorini, Greece\n4. New York City, USA",
-    createdAt: "2022-09-15T11:55:44.678Z",
-    archived: false,
-  },
-  {
-    id: "notes-asdfgh-123456",
-    title: "Coding Projects",
-    body: "1. Build a personal website\n2. Create a mobile app\n3. Contribute to an open-source project",
-    createdAt: "2022-09-20T17:10:12.987Z",
-    archived: false,
-  },
-  {
-    id: "notes-5678-abcd-efgh",
-    title: "Project Deadline",
-    body: "Complete project tasks by the deadline on October 1st.",
-    createdAt: "2022-09-28T14:00:00.000Z",
-    archived: false,
-  },
-  {
-    id: "notes-9876-wxyz-1234",
-    title: "Health Checkup",
-    body: "Schedule a routine health checkup with the doctor.",
-    createdAt: "2022-10-05T09:30:45.600Z",
-    archived: false,
-  },
-  {
-    id: "notes-qwerty-8765-4321",
-    title: "Financial Goals",
-    body: "1. Create a monthly budget\n2. Save 20% of income\n3. Invest in a retirement fund.",
-    createdAt: "2022-10-12T12:15:30.890Z",
-    archived: false,
-  },
-  {
-    id: "notes-98765-54321-12345",
-    title: "Holiday Plans",
-    body: "Research and plan for the upcoming holiday destination.",
-    createdAt: "2022-10-20T16:45:00.000Z",
-    archived: false,
-  },
-  {
-    id: "notes-1234-abcd-5678",
-    title: "Language Learning",
-    body: "Practice Spanish vocabulary for 30 minutes every day.",
-    createdAt: "2022-10-28T08:00:20.120Z",
-    archived: false,
-  },
-  // Tambahkan lebih banyak data sesuai kebutuhan
-];
+// Fungsi untuk mengambil data catatan dari server
+async function fetchNotes() {
+  try {
+    const response = await fetch("http://localhost:5000/notes"); // Ambil data dari backend
+    if (!response.ok) {
+      throw new Error("Gagal mengambil data catatan");
+    }
+    const data = await response.json(); // Parse response ke format JSON
+    return data;
+  } catch (error) {
+    console.error(error);
+    return [];
+  }
+}
 
+// Fungsi untuk merender catatan
+async function renderNotes() {
+  const notes = await fetchNotes(); // Ambil catatan dari server
+  notesList.innerHTML = ""; // Bersihkan daftar sebelum render ulang
+  notes.forEach((note) => {
+    const noteItem = document.createElement("note-item");
+    noteItem.setAttribute("title", note.title);
+    noteItem.setAttribute("body", note.body);
+    noteItem.setAttribute("created-at", note.createdAt);
+    notesList.appendChild(noteItem);
+  });
+}
+
+// Custom element untuk menampilkan catatan
 class NoteItem extends HTMLElement {
   static get observedAttributes() {
     return ["title", "body", "created-at"];
@@ -149,14 +68,12 @@ class NoteItem extends HTMLElement {
 
   // Callback ini dipanggil setiap kali attribute berubah
   attributeChangedCallback(name, oldValue, newValue) {
-    // Pastikan elemen shadowRoot sudah tersedia
     if (!this.shadowRoot) return;
 
     const h3 = this.shadowRoot.querySelector("h3");
     const p = this.shadowRoot.querySelector("p");
     const small = this.shadowRoot.querySelector("small");
 
-    // Pastikan elemen sudah ada sebelum diakses
     if (name === "title" && h3) {
       h3.textContent = newValue;
     }
@@ -176,17 +93,6 @@ if (!customElements.get("note-item")) {
 
 // Fungsi untuk merender catatan
 const notesList = document.getElementById("notes-list");
-
-function renderNotes() {
-  notesList.innerHTML = ""; // Bersihkan daftar sebelum render ulang
-  notesData.forEach((note) => {
-    const noteItem = document.createElement("note-item");
-    noteItem.setAttribute("title", note.title);
-    noteItem.setAttribute("body", note.body);
-    noteItem.setAttribute("created-at", note.createdAt);
-    notesList.appendChild(noteItem);
-  });
-}
 
 // Real-time Validation pada Form
 const form = document.getElementById("add-note-form");
@@ -219,33 +125,140 @@ function validateBody() {
 titleInput.addEventListener("input", validateTitle);
 bodyInput.addEventListener("input", validateBody);
 
-// Event submit dengan validasi
-form.addEventListener("submit", function (e) {
+// Event submit dengan validasi dan pengiriman data ke backend
+form.addEventListener("submit", async function (e) {
   e.preventDefault();
 
-  // Validasi sebelum menambah catatan
   const isTitleValid = validateTitle();
   const isBodyValid = validateBody();
 
   if (!isTitleValid || !isBodyValid) {
-    return; // Jika ada validasi yang gagal, jangan lanjutkan
+    return;
   }
 
   const title = titleInput.value;
   const body = bodyInput.value;
 
   const newNote = {
-    id: `notes-${Date.now()}`, // ID unik
     title,
     body,
     createdAt: new Date().toISOString(),
     archived: false,
   };
 
-  notesData.push(newNote); // Tambahkan catatan baru ke data
-  renderNotes(); // Render ulang catatan
-  form.reset(); // Reset form setelah submit
+  try {
+    // Kirim catatan baru ke backend
+    const response = await fetch("http://localhost:5000/notes", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(newNote),
+    });
+
+    if (!response.ok) {
+      throw new Error("Gagal menambah catatan baru");
+    }
+
+    // Reset form dan render ulang catatan setelah menambah catatan baru
+    form.reset();
+    renderNotes();
+  } catch (error) {
+    console.error(error);
+  }
 });
+
+async function deleteNote(id) {
+  try {
+    const response = await fetch(`http://localhost:5000/notes/${id}`, {
+      method: "DELETE",
+    });
+
+    if (!response.ok) {
+      throw new Error("Gagal menghapus catatan");
+    }
+
+    const result = await response.json();
+    console.log(result.message);
+
+    // Render ulang catatan setelah dihapus
+    renderNotes();
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+async function deleteNote(id) {
+  try {
+    const response = await fetch(`http://localhost:5000/notes/${id}`, {
+      method: "DELETE",
+    });
+
+    if (!response.ok) {
+      throw new Error("Gagal menghapus catatan");
+    }
+
+    const result = await response.json();
+    console.log(result.message); // Tampilkan pesan sukses di console
+
+    // Render ulang catatan setelah dihapus
+    renderNotes();
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+async function renderNotes() {
+  const notes = await fetchNotes(); // Ambil catatan dari server
+  notesList.innerHTML = ""; // Bersihkan daftar sebelum render ulang
+
+  notes.forEach((note) => {
+    // Buat elemen catatan baru
+    const noteItem = document.createElement("div"); // Ganti ke div untuk menampilkan secara normal
+    const noteTitle = document.createElement("h3");
+    const noteBody = document.createElement("p");
+    const noteDate = document.createElement("small");
+
+    // Tambahkan konten ke dalam catatan
+    noteTitle.textContent = note.title || "Untitled";
+    noteBody.textContent = note.body || "No content";
+    noteDate.textContent = new Date(note.createdAt).toLocaleDateString();
+
+    // Membuat tombol hapus
+    const deleteButton = document.createElement("button");
+    deleteButton.textContent = "Delete";
+    deleteButton.classList.add("delete-button");
+
+    // Tambahkan event listener untuk tombol delete
+    deleteButton.addEventListener("click", () => deleteNote(note.id));
+
+    // Tambahkan elemen catatan ke dalam noteItem
+    noteItem.appendChild(noteTitle);
+    noteItem.appendChild(noteBody);
+    noteItem.appendChild(noteDate);
+    noteItem.appendChild(deleteButton); // Tambahkan tombol delete ke dalam noteItem
+
+    // Tambahkan noteItem ke daftar catatan
+    notesList.appendChild(noteItem);
+  });
+}
+
+// Fungsi deleteNote
+async function deleteNote(id) {
+  try {
+    const response = await fetch(`http://localhost:5000/notes/${id}`, {
+      method: "DELETE",
+    });
+    if (!response.ok) {
+      throw new Error("Gagal menghapus catatan");
+    }
+    const result = await response.json();
+    console.log(result.message);
+    renderNotes(); // Render ulang catatan setelah dihapus
+  } catch (error) {
+    console.error(error);
+  }
+}
 
 // Render catatan pada awal pemuatan halaman
 renderNotes();
