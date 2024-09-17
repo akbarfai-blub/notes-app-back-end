@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Notes App</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <h1>Notes App</h1>
+
+    <!-- Formulir Tambah Catatan -->
+    <form id="add-note-form">
+      <div>
+        <input type="text" id="note-title" placeholder="Title" required />
+        <span class="error-message" id="title-error"></span>
+      </div>
+      <div>
+        <textarea
+          id="note-body"
+          placeholder="Write your note here..."
+          required
+        ></textarea>
+        <span class="error-message" id="body-error"></span>
+      </div>
+      <button type="submit">Add Note</button>
+    </form>
+
+    <!-- Daftar Catatan -->
+    <div id="notes-list"></div>
+
+    <!-- Memuat JavaScript -->
+    <script src="script.js"></script>
+  </body>
+</html>
